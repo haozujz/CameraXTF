@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Alignment
 import androidx.compose.runtime.remember
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cameraswitch
@@ -63,7 +62,20 @@ import java.io.File
 import android.widget.Toast
 import com.example.cameraxtf.helpers.savePhotoToGallery
 import com.example.cameraxtf.helpers.saveVideoToGallery
+import com.example.cameraxtf.presentation.CameraPreview
 import com.example.cameraxtf.viewmodels.MainViewModel
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.example.cameraxtf.data.TFLiteClassifier
+import com.example.cameraxtf.domain.Classification
+import com.example.cameraxtf.presentation.ImageAnalyzer
+import androidx.compose.foundation.background
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.size
 
 class MainActivity : ComponentActivity() {
 
@@ -81,19 +93,51 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CameraXTFTheme {
-                val scaffoldState = rememberBottomSheetScaffoldState()
+                // Use mutableStateOf directly to create a mutable state
+                val classifications = remember { mutableStateOf(emptyList<Classification>()) }
+
+                // Initialize ImageAnalyzer with the onResults callback to update classifications
+                val analyzer = remember {
+                    ImageAnalyzer(
+                        classifier = TFLiteClassifier(
+                            context = applicationContext
+                        ),
+                        onResults = {
+                            classifications.value = it  // Use .value to update the state
+                        }
+                    )
+                }
                 val controller = remember {
                     LifecycleCameraController(applicationContext).apply {
+                        // Enable all required use cases: IMAGE_ANALYSIS, IMAGE_CAPTURE, VIDEO_CAPTURE
+                        //setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
                         setEnabledUseCases(
-                            CameraController.IMAGE_CAPTURE or
+                            CameraController.IMAGE_ANALYSIS or
+                                    CameraController.IMAGE_CAPTURE or
                                     CameraController.VIDEO_CAPTURE
+                        )
+
+                        // Set up the analyzer for image classification
+                        setImageAnalysisAnalyzer(
+                            ContextCompat.getMainExecutor(applicationContext),
+                            analyzer
                         )
                     }
                 }
 
+                // Capture photo or Video
+//                val controller = remember {
+//                    LifecycleCameraController(applicationContext).apply {
+//                        setEnabledUseCases(
+//                            CameraController.IMAGE_CAPTURE or
+//                                    CameraController.VIDEO_CAPTURE
+//                        )
+//                    }
+//                }
+
+                val scaffoldState = rememberBottomSheetScaffoldState()
                 val viewModel = viewModel<MainViewModel>()
                 val bitmaps by viewModel.bitmaps.collectAsState()
-
                 val scope = rememberCoroutineScope()
 
                 BottomSheetScaffold(
@@ -118,6 +162,26 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize()
                         )
 
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.TopCenter)
+                                .padding(top = 38.dp)
+                        ) {
+                            classifications.value.forEach {
+                                Text(
+                                    text = it.name,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(8.dp),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+
                         IconButton(
                             onClick = {
                                 controller.cameraSelector =
@@ -128,12 +192,14 @@ class MainActivity : ComponentActivity() {
                                     }
                             },
                             modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(top = 32.dp)
+                                .align(Alignment.BottomStart)
+                                .padding(bottom = 76.dp, start = 28.dp)
+
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Cameraswitch,
-                                contentDescription = "Switch camera"
+                                contentDescription = "Switch camera",
+                                modifier = Modifier.size(38.dp)
                             )
                         }
 

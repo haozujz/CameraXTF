@@ -1,17 +1,18 @@
-package com.example.cameraxtf
+package com.example.cameraxtf.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
 fun CameraPreview(
     controller: LifecycleCameraController,
     modifier: Modifier = Modifier
 ) {
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     AndroidView(
         factory = {
             PreviewView(it).apply {
@@ -19,7 +20,11 @@ fun CameraPreview(
                 controller.bindToLifecycle(lifecycleOwner)
             }
         },
-        //update = ...
+        /*
+        update = { view -> ... }
+        // Called when the Composable is recomposed
+        //Use it to update the PreviewView if the controller changes.
+        */
         modifier = modifier
     )
 }
