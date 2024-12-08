@@ -6,6 +6,9 @@ import android.util.Log
 //import android.content.Context
 
 fun Bitmap.centerCrop(desiredWidth: Int, desiredHeight: Int): Bitmap? {
+//    Log.d("BitmapCenterCrop", "Original Bitmap dimensions: width=$width, height=$height")
+//    Original Bitmap dimensions: width=640, height=480
+
     val xStart = (width - desiredWidth) / 2
     val yStart = (height - desiredHeight) / 2
 

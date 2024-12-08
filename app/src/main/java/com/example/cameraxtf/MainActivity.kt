@@ -77,6 +77,13 @@ import androidx.compose.foundation.background
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.size
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.border
+
+
 class MainActivity : ComponentActivity() {
 
     private var recording: Recording? = null
@@ -162,6 +169,23 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize()
                         )
 
+                        // Add the overlay with a square for center crop
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center)
+                        ) {
+                            val cropSize = 321 // Size of the center crop area
+                            val offset = (LocalDensity.current.density * (480 - 321)) / 2 // Centering the square
+                            Box(
+                                modifier = Modifier
+                                    .width(cropSize.dp)
+                                    .height(cropSize.dp)
+                                    .border(2.dp, Color.Blue)
+                                    .align(Alignment.Center)
+                            )
+                        }
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -178,6 +202,18 @@ class MainActivity : ComponentActivity() {
                                     textAlign = TextAlign.Center,
                                     fontSize = 20.sp,
                                     color = MaterialTheme.colorScheme.primary
+                                )
+
+                                // Display the confidence score underneath the classification name
+                                Text(
+                                    text = "Confidence: ${"%.2f".format(it.score)}",  // Format the score to 2 decimal places
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                                        .padding(top = 4.dp),  // Add some space between the name and score
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }

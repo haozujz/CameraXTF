@@ -9,6 +9,11 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
+        maven {
+            url = uri("https://maven.tensorflow.org/") // Correct syntax for Kotlin DSL
+        }
+
     }
 }
 dependencyResolutionManagement {
