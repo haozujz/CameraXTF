@@ -8,3 +8,6 @@ Built for research, diagnostics, or educational use in ophthalmology and optomet
 
 Kotlin. Jetpack compose. CameraX.
 Tensorflow lite/Lite RT | Tensorflow
+
+## Screenshot  
+<img src="https://raw.githubusercontent.com/haozujz/CameraXTF/master/readMePreview/ss0.png" width="380" />
