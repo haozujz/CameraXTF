@@ -1,8 +1,8 @@
 # RetinoScan
 
-Real-time ocular disease identification via retinal OCT classification powered by bespoke on-device AI.
+Real-time automated ocular disease detection via retinal OCT classification powered by bespoke on-device AI.
 
-Custom-trained deep learning model for OCT image classification.
+Custom-trained convolutional neural network model for OCT image classification.
 Real-time inference using TensorFlow Lite/LiteRT.
 Built for research, diagnostics, or educational use in ophthalmology and optometry.
 
